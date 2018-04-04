@@ -101,7 +101,6 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
     
     // Display the Safari View
     [ctrl presentViewController:self.safariView animated:YES completion:nil];
-
     [overlayView.superview bringSubviewToFront: overlayView];
 
     if (hasListeners) {
