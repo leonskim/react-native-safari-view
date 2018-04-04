@@ -83,7 +83,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
 
     NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
     overlayView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
-                                              moduleName:@"CauseInfo"
+                                              moduleName:@"RetailerLoading"
                                        initialProperties:
                                            @{
                                              @"heading": heading,
