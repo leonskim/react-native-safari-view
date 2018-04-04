@@ -3,10 +3,13 @@
 #import <React/RCTUtils.h>
 #import <React/RCTLog.h>
 #import <React/RCTConvert.h>
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTRootView.h>
 
 @implementation SafariViewManager
 {
     bool hasListeners;
+    RCTRootView *overlayView;
 }
 
 RCT_EXPORT_MODULE()
@@ -72,11 +75,34 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
         self.safariView.modalPresentationStyle = UIModalPresentationOverFullScreen;
     }
 
+    // Add RN view as a subview
+    NSString *heading = args[@"heading"];
+    NSString *name = args[@"name"];
+    NSString *address = args[@"formattedAddress"];
+    NSString *logoUrl = args[@"logoUrl"];
+
+    NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+    overlayView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
+                                              moduleName:@"CauseInfo"
+                                       initialProperties:
+                                           @{
+                                             @"heading": heading,
+                                             @"name": name,
+                                             @"address": address,
+                                             @"logoUrl": logoUrl,
+                                             }
+                                           launchOptions: nil];
+
+    // Attach overlay view to the very front window
+    [[UIApplication sharedApplication].keyWindow addSubview:overlayView];
+
     // get the view controller closest to the foreground
     UIViewController *ctrl = RCTPresentedViewController();
     
     // Display the Safari View
     [ctrl presentViewController:self.safariView animated:YES completion:nil];
+
+    [overlayView.superview bringSubviewToFront: overlayView];
 
     if (hasListeners) {
         [self sendEventWithName:@"SafariViewOnShow" body:nil];
@@ -102,6 +128,7 @@ RCT_EXPORT_METHOD(dismiss)
 
 -(void)safariViewControllerDidFinish:(nonnull SFSafariViewController *)controller
 {
+    [overlayView removeFromSuperview];
     [controller dismissViewControllerAnimated:true completion:nil];
     NSLog(@"[SafariView] SafariView dismissed.");
 
@@ -110,4 +137,8 @@ RCT_EXPORT_METHOD(dismiss)
     }
 }
 
+- (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully
+{
+    [overlayView removeFromSuperview];
+}
 @end
