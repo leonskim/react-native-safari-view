@@ -98,7 +98,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
 
     // get the view controller closest to the foreground
     UIViewController *ctrl = RCTPresentedViewController();
-    
+
     // Display the Safari View
     [ctrl presentViewController:self.safariView animated:YES completion:nil];
     [overlayView.superview bringSubviewToFront: overlayView];
@@ -118,6 +118,11 @@ RCT_EXPORT_METHOD(isAvailable:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromi
     } else {
         reject(@"E_SAFARI_VIEW_UNAVAILABLE", @"SafariView is unavailable", nil);
     }
+}
+
+RCT_EXPORT_METHOD(closeLoader)
+{
+    [overlayView removeFromSuperview];
 }
 
 RCT_EXPORT_METHOD(dismiss)
