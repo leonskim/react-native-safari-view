@@ -99,6 +99,12 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
     // get the view controller closest to the foreground
     UIViewController *ctrl = RCTPresentedViewController();
 
+    // Tap event to close loader
+    UITapGestureRecognizer *singleFingerTap =
+    [[UITapGestureRecognizer alloc] initWithTarget:self
+                                            action:@selector(handleSingleTap:)];
+    [self.safariView.view addGestureRecognizer:singleFingerTap];
+
     // Display the Safari View
     [ctrl presentViewController:self.safariView animated:YES completion:nil];
     [overlayView.superview bringSubviewToFront: overlayView];
@@ -120,14 +126,14 @@ RCT_EXPORT_METHOD(isAvailable:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromi
     }
 }
 
-RCT_EXPORT_METHOD(closeLoader)
-{
-    [overlayView removeFromSuperview];
-}
-
 RCT_EXPORT_METHOD(dismiss)
 {
     [self safariViewControllerDidFinish:self.safariView];
+}
+
+- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer
+{
+    [overlayView removeFromSuperview];
 }
 
 -(void)safariViewControllerDidFinish:(nonnull SFSafariViewController *)controller

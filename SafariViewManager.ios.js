@@ -27,10 +27,6 @@ export default {
     NativeSafariViewManager.dismiss();
   },
 
-  closeLoader() {
-    NativeSafariViewManager.closeLoader();
-  },
-
   isAvailable() {
     return NativeSafariViewManager.isAvailable();
   },
