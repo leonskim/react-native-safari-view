@@ -81,17 +81,21 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
     NSString *address = args[@"formattedAddress"];
     NSString *logoUrl = args[@"logoUrl"];
 
-    NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
-    overlayView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
-                                              moduleName:@"RetailerLoading"
-                                       initialProperties:
-                                           @{
-                                             @"heading": heading,
-                                             @"name": name,
-                                             @"address": address,
-                                             @"logoUrl": logoUrl,
-                                             }
-                                           launchOptions: nil];
+    Boolean retailerExists = name != nil;
+
+    if (retailerExists) {
+        NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+        overlayView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
+                                                  moduleName:@"RetailerLoading"
+                                           initialProperties:
+                                               @{
+                                                 @"heading": heading,
+                                                 @"name": name,
+                                                 @"address": address,
+                                                 @"logoUrl": logoUrl,
+                                                 }
+                                               launchOptions: nil];
+    }
 
     // Attach overlay view to the very front window
     [[UIApplication sharedApplication].keyWindow addSubview:overlayView];
@@ -107,8 +111,10 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
 
     // Display the Safari View
     [ctrl presentViewController:self.safariView animated:YES completion:nil];
-    [overlayView.superview bringSubviewToFront: overlayView];
 
+    if (retailerExists) {
+        [overlayView.superview bringSubviewToFront: overlayView];
+    }
     if (hasListeners) {
         [self sendEventWithName:@"SafariViewOnShow" body:nil];
     }
