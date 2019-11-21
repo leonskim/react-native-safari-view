@@ -110,11 +110,12 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)args resolver:(RCTPromiseResolveBlock)res
     [self.safariView.view addGestureRecognizer:singleFingerTap];
 
     // Display the Safari View
-    [ctrl presentViewController:self.safariView animated:YES completion:nil];
-
-    if (retailerExists) {
+    [ctrl presentViewController:self.safariView animated:YES completion:^{
+      if (retailerExists) {
         [overlayView.superview bringSubviewToFront: overlayView];
-    }
+      }
+    }];
+
     if (hasListeners) {
         [self sendEventWithName:@"SafariViewOnShow" body:nil];
     }
